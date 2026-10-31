@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="OMG Dock: dynamiczna wyspa dla Windowsa. Muzyka z tekstem w rytm wokalu, schowek, klipy z gier i staty z FACEIT, Overwatch i Fortnite.">
+<link rel="icon" type="image/png" href="img/ikona.png">
+<title>OMG Dock</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a pitch on the left, a "screen" on the right with a live, clickable replica of the island on it.
+   Below: the tabs as a feature index, keycaps, the install steps and the file's facts.
+   The page takes its accent colours from the demo song, the way the dock takes them from the cover. */
+@property --a1 { syntax: "<color>"; inherits: true; initial-value: #e4e4ea; }
+@property --a2 { syntax: "<color>"; inherits: true; initial-value: #9a9aa6; }
+@property --a3 { syntax: "<color>"; inherits: true; initial-value: #4a4a56; }
+:root {
+  --bg: #0e0d12;
+  --surface: #16141c;
+  --raised: #1d1b25;
+  --line: #2a2733;
+  --text: #efedf5;
+  --muted: #a6a3b4;
+  --faint: #716e80;
+  --island: #050507;
+  --a1: #e4e4ea;
+  --a2: #9a9aa6;
+  --a3: #4a4a56;
+  --display: "Unbounded", "Segoe UI", system-ui, sans-serif;
+  --body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+  transition: --a1 1.4s ease, --a2 1.4s ease, --a3 1.4s ease;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--a2); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 1160px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.2rem); font-weight: 700; line-height: 1.15; }
+.eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.mono { font-family: var(--mono); }
+section { padding-block: clamp(56px, 8vw, 104px); border-top: 1px solid var(--line); }
+.section-head { display: grid; gap: 12px; max-width: 46rem; margin-bottom: 40px; }
+.section-head p:not(.eyebrow) { color: var(--muted); margin: 0; max-width: 60ch; }
+
+/* ---------- hero ---------- */
+.hero { padding-block: clamp(32px, 6vw, 72px) clamp(56px, 8vw, 96px); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 4vw, 56px); align-items: center; }
+.pitch { display: grid; gap: 22px; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+.brand img { width: 30px; height: 30px; border-radius: 8px; display: block; }
+h1 { font-size: clamp(2.8rem, 1.6rem + 5vw, 5.4rem); font-weight: 800; line-height: 0.95; }
+h1 span { display: block; background: linear-gradient(100deg, var(--a1), var(--a2) 55%, var(--a3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lede { font-size: 1.12rem; color: var(--muted); margin: 0; max-width: 34rem; }
+.lede b { color: var(--text); font-weight: 600; }
+.cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px; }
+.dl { display: inline-flex; align-items: center; gap: 12px; padding: 15px 22px; border-radius: 14px; background: var(--text); color: var(--bg);
+      font-weight: 700; text-decoration: none; font-size: 1.02rem; transition: transform .2s ease, box-shadow .3s ease;
+      box-shadow: 0 10px 40px -12px var(--a1); }
+.dl:hover { transform: translateY(-2px); box-shadow: 0 16px 50px -12px var(--a1); }
+.dl svg { width: 18px; height: 18px; }
+.dl.off { background: var(--raised); color: var(--faint); box-shadow: none; pointer-events: none; }
+.dl-meta { font-family: var(--mono); font-size: 0.82rem; color: var(--muted); }
+.note { margin: 0; font-size: 0.9rem; color: var(--muted); border-left: 2px solid var(--line); padding-left: 12px; max-width: 34rem; }
+
+/* the "screen": wallpaper, a window, the island at the top, a taskbar */
+.screen { position: relative; aspect-ratio: 16 / 10.5; max-width: 100%; border-radius: 18px; overflow: hidden; background: #0b0a0f;
+          border: 1px solid var(--line); box-shadow: 0 40px 120px -40px rgba(0,0,0,.9); min-width: 0; }
+.wall { position: absolute; inset: -20%; filter: blur(48px) saturate(1.2); opacity: .85;
+        background:
+          radial-gradient(40% 45% at 22% 30%, var(--a1), transparent 70%),
+          radial-gradient(38% 42% at 78% 26%, var(--a3), transparent 70%),
+          radial-gradient(45% 45% at 55% 85%, var(--a2), transparent 72%),
+          #0b0a0f;
+        animation: drift 18s ease-in-out infinite alternate; }
+@keyframes drift { to { transform: translate(4%, -3%) scale(1.08) rotate(3deg); } }
+.win { position: absolute; left: 7%; bottom: 17%; width: 46%; height: 42%; border-radius: 10px; background: rgba(14,13,18,.72);
+       border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(6px); }
+.win::before { content: ""; position: absolute; inset: 0 0 auto; height: 22px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.win i { position: absolute; left: 8%; height: 7px; border-radius: 4px; background: rgba(255,255,255,.12); }
+.taskbar { position: absolute; inset: auto 0 0; height: 9%; min-height: 26px; background: rgba(10,9,14,.82); border-top: 1px solid rgba(255,255,255,.06);
+           display: flex; align-items: center; justify-content: center; gap: 1.4%; }
+.taskbar b { width: 3.2%; aspect-ratio: 1; border-radius: 4px; background: rgba(255,255,255,.16); display: block; }
+.taskbar b:first-child { background: linear-gradient(135deg, #4cc2ff, #0067c0); }
+.taskbar span { position: absolute; right: 2.5%; font-family: var(--mono); font-size: clamp(8px, 1.2vw, 11px); color: rgba(255,255,255,.7); }
+
+/* ---------- the island replica ---------- */
+.island { position: absolute; top: 0; left: 50%; translate: -50% 0; width: 46%; height: 34px; background: var(--island); color: #fff;
+          border-radius: 0 0 17px 17px; overflow: hidden; cursor: pointer; font-family: var(--body);
+          transition: width .55s cubic-bezier(.34,1.3,.5,1), height .55s cubic-bezier(.34,1.3,.5,1), border-radius .5s ease;
+          box-shadow: 0 6px 30px -6px color-mix(in srgb, var(--a1) 55%, transparent); }
+.island[data-open="true"] { width: 92%; height: 66%; border-radius: 0 0 28px 28px; cursor: default; }
+.pill { position: absolute; inset: 0 auto auto 0; width: 100%; height: 34px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding-inline: 12px;
+        transition: opacity .2s ease; }
+.island[data-open="true"] .pill { opacity: 0; pointer-events: none; }
+.pill .art { width: 20px; height: 20px; border-radius: 6px; background: linear-gradient(135deg, var(--a1), var(--a3)); }
+.pill .clock { font-family: var(--display); font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+.eq { display: flex; gap: 2px; justify-self: end; align-items: center; height: 14px; }
+.eq i { width: 3px; height: 100%; border-radius: 2px; background: linear-gradient(var(--a2), var(--a1)); transform-origin: center; animation: eq 1s ease-in-out infinite; }
+.eq i:nth-child(2) { animation-delay: -.3s; } .eq i:nth-child(3) { animation-delay: -.6s; } .eq i:nth-child(4) { animation-delay: -.15s; }
+@keyframes eq { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+
+.panel { position: absolute; inset: 0; padding: 12px 16px 14px; display: grid; grid-template-rows: auto 1fr; gap: 10px; opacity: 0; transition: opacity .3s ease .15s; }
+.island[data-open="true"] .panel { opacity: 1; }
+.island:not([data-open="true"]) .panel { pointer-events: none; transition-delay: 0s; }
+.aurora { position: absolute; inset: 0; opacity: .38; pointer-events: none;
+          background: radial-gradient(60% 80% at 15% 20%, var(--a1), transparent 70%), radial-gradient(60% 80% at 85% 30%, var(--a3), transparent 70%); }
+.bar { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.bar .time { font-family: var(--display); font-weight: 700; font-size: clamp(11px, 1.5vw, 15px); line-height: 1; font-variant-numeric: tabular-nums; }
+.bar .time small { display: block; font-family: var(--body); font-weight: 500; font-size: .62em; color: rgba(255,255,255,.6); margin-top: 3px; }
+.tabs { display: flex; gap: 2px; padding: 2px; border-radius: 999px; background: rgba(255,255,255,.08); }
+.tabs button { all: unset; display: flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; font-size: clamp(9px, 1.1vw, 11px);
+               color: rgba(255,255,255,.75); cursor: pointer; }
+.tabs button svg { width: 12px; height: 12px; }
+.tabs button span { display: none; }
+.tabs button[aria-selected="true"] { background: rgba(255,255,255,.18); color: #fff; }
+.tabs button[aria-selected="true"] span { display: inline; }
+.tabs button:focus-visible { outline: 2px solid var(--a2); }
+.bar .gear { justify-self: end; width: 22px; height: 22px; color: rgba(255,255,255,.75); }
+.view { position: relative; min-height: 0; }
+.view:not(.on) { display: none; }
+.view.on { display: grid; animation: in .35s ease; }
+@keyframes in { from { opacity: 0; transform: translateX(10px); } }
+
+.music { grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; gap: 6px 14px; align-content: start; }
+.cover { width: clamp(52px, 9vw, 96px); aspect-ratio: 1; border-radius: 14px; overflow: hidden; position: relative;
+         background: linear-gradient(135deg, var(--a1), var(--a3)); }
+.cover::after { content: ""; position: absolute; inset: -30%; background: radial-gradient(closest-side, var(--a2), transparent); opacity: .8;
+                animation: kb 9s ease-in-out infinite alternate; }
+@keyframes kb { from { transform: translate(-12%, -8%) scale(1); } to { transform: translate(14%, 10%) scale(1.25); } }
+/* real covers: in the island and in the pill, drifting like the dock's living cover */
+.cover img, .pill .art img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.pill .art { position: relative; overflow: hidden; }
+.cover img { animation: drift-cover 13s ease-in-out infinite alternate; }
+@keyframes drift-cover { from { transform: scale(1.1) translate(-3%, 2%); } to { transform: scale(1.2) translate(3%, -2%); } }
+.cover.has-img::after { display: none; }
+/* the same cover, blurred, as the screen's wallpaper */
+.wall-cover { position: absolute; left: -15%; top: -15%; width: 130%; height: 130%; max-width: none; object-fit: cover;
+              filter: blur(42px) saturate(1.35) brightness(.72); opacity: 0; transition: opacity 1.2s ease; }
+.wall-cover.on { opacity: .95; }
+
+/* ---------- bar that slides in once the big download button is scrolled away ---------- */
+.topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 20; padding-top: env(safe-area-inset-top, 0px);
+          background: color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line);
+          transform: translateY(-110%); transition: transform .35s ease; }
+.topbar.show { transform: none; }
+.topbar .wrap { display: flex; align-items: center; gap: 12px; padding-block: 10px; }
+.topbar img { width: 26px; height: 26px; border-radius: 7px; }
+.topbar b { font-family: var(--display); font-size: .95rem; }
+.topbar span { color: var(--faint); font-family: var(--mono); font-size: .78rem; }
+.topbar .dl { margin-left: auto; padding: 9px 16px; font-size: .9rem; border-radius: 11px; box-shadow: none; }
+
+/* ---------- what's new ---------- */
+section.news { padding-block: 28px 36px; }
+.news .wrap { display: grid; gap: 14px; }
+.news-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.news-list div { padding: 16px 18px; border-radius: 14px; background: var(--surface); display: grid; gap: 4px; align-content: start; min-width: 0; }
+.news-list b { font-family: var(--display); font-weight: 700; font-size: .95rem; }
+.news-list span { color: var(--muted); font-size: .88rem; }
+
+/* ---------- settings window ---------- */
+.showcase { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+.showcase ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; color: var(--muted); }
+.showcase li { display: grid; grid-template-columns: 14px 1fr; gap: 10px; }
+.showcase li::before { content: ""; width: 8px; height: 8px; margin-top: 9px; border-radius: 50%; background: linear-gradient(135deg, var(--a1), var(--a3)); }
+.showcase li b { color: var(--text); font-weight: 600; }
+.shot { margin: 0; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 30px 90px -30px rgba(0,0,0,.95); }
+.shot img { display: block; width: 100%; height: auto; }
+@media (max-width: 920px) { .showcase { grid-template-columns: 1fr; } .news-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .news-list { grid-template-columns: 1fr; } .topbar span { display: none; } }
+.track { display: grid; gap: 4px; align-content: center; min-width: 0; }
+.track b { font-family: var(--display); font-weight: 700; font-size: clamp(11px, 1.6vw, 16px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track span { font-size: clamp(9px, 1.15vw, 12px); color: rgba(255,255,255,.65); }
+.track .artist { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.track a { font-size: clamp(8px, 1vw, 11px); color: rgba(255,255,255,.55); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.25); }
+.track a:hover { color: #fff; }
+.prog { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: clamp(8px, .95vw, 10px); color: rgba(255,255,255,.55); font-variant-numeric: tabular-nums; }
+.prog div { flex: 1; height: 3px; border-radius: 3px; background: rgba(255,255,255,.15); overflow: hidden; }
+.prog div i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--a1), var(--a2)); }
+.lyrics { grid-column: 1 / -1; display: grid; gap: 2px; text-align: center; align-content: center; font-weight: 700; font-size: clamp(9px, 1.3vw, 13px);
+          -webkit-mask: linear-gradient(transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(transparent, #000 30%, #000 70%, transparent); }
+.lyrics p { margin: 0; opacity: .3; transition: opacity .4s ease, transform .4s ease; transform: scale(.94); }
+.lyrics p.now { opacity: 1; transform: none; }
+
+.clip-list { display: grid; gap: 6px; align-content: start; }
+.clip-row { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: center; padding: 6px 10px; border-radius: 10px; background: rgba(255,255,255,.07);
+            font-size: clamp(9px, 1.15vw, 12px); min-width: 0; }
+.clip-row i { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-style: normal; font-size: 10px; background: rgba(255,255,255,.12); }
+.clip-row span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.clip-row em { font-style: normal; color: rgba(255,255,255,.5); font-family: var(--mono); font-size: .85em; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; align-content: start; }
+.tile { aspect-ratio: 16 / 10; border-radius: 9px; position: relative; overflow: hidden; }
+.tile:nth-child(1) { background: linear-gradient(135deg, #3a2a5e, #e0578b); } .tile:nth-child(2) { background: linear-gradient(135deg, #1b4d3e, #e2c35a); }
+.tile:nth-child(3) { background: linear-gradient(135deg, #20304f, #5bc0eb); } .tile:nth-child(4) { background: linear-gradient(135deg, #4a2a1a, #f08a4b); }
+.tile b, .tile em { position: absolute; bottom: 5px; font-size: clamp(7px, .9vw, 9.5px); padding: 1px 5px; border-radius: 5px; background: rgba(0,0,0,.65); font-style: normal; }
+.tile b { left: 5px; font-weight: 600; } .tile em { right: 5px; font-family: var(--mono); }
+.clip-actions { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; }
+.clip-actions span { font-size: clamp(8px, 1vw, 11px); padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,.1); }
+.stats { grid-template-columns: auto 1fr; gap: 10px 16px; align-content: start; }
+.level { width: clamp(40px, 6vw, 58px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 800;
+         font-size: clamp(14px, 2vw, 20px); border: 3px solid #fe1f00; color: #fe1f00; }
+.elo { display: grid; align-content: center; gap: 2px; }
+.elo b { font-family: var(--display); font-size: clamp(14px, 2.2vw, 22px); font-variant-numeric: tabular-nums; }
+.elo span { font-size: clamp(8px, 1vw, 11px); color: rgba(255,255,255,.6); }
+.matches { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+.matches span { font-family: var(--mono); font-size: clamp(8px, 1vw, 10.5px); padding: 4px 8px; border-radius: 8px; background: rgba(74,222,128,.16); color: #7ef0a6; }
+.matches span.l { background: rgba(255,90,95,.16); color: #ff8d90; }
+.demo-tag { position: absolute; right: 10px; bottom: 8px; font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,.4); }
+
+.stage-cap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 12px; font-family: var(--mono); font-size: .78rem; color: var(--faint); }
+.stage-cap button { all: unset; cursor: pointer; color: var(--muted); border-bottom: 1px dashed var(--faint); }
+.stage-cap button:focus-visible { outline: 2px solid var(--a2); }
+.cap-btns { display: inline-flex; gap: 16px; }
+
+/* ---------- tabs index ---------- */
+.index { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.index article { background: var(--bg); padding: 22px 22px 24px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.index h3 { font-size: 1.02rem; font-weight: 700; display: flex; align-items: baseline; gap: 10px; }
+.index h3 small { font-family: var(--mono); font-weight: 500; font-size: .72rem; color: var(--faint); letter-spacing: .04em; }
+.index p { margin: 0; color: var(--muted); font-size: .95rem; }
+.index .detail { font-family: var(--mono); font-size: .78rem; color: var(--text); opacity: .8; }
+.index article.wide { grid-column: span 2; }
+.index article.lead { grid-column: span 2; background: linear-gradient(140deg, color-mix(in srgb, var(--a1) 14%, var(--bg)), var(--bg) 60%); }
+.index article.lead h3 { font-size: 1.3rem; }
+.index article.lead ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; color: var(--muted); }
+.index article.lead li::before { content: "→ "; color: var(--a2); }
+
+.tweaks { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.tweaks span { padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+
+/* ---------- keys ---------- */
+.keys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.key { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; background: var(--surface); min-width: 0; }
+.caps { display: flex; gap: 4px; flex-shrink: 0; }
+.caps kbd { font-family: var(--mono); font-size: .78rem; padding: 4px 8px; border-radius: 7px; background: var(--raised); border: 1px solid #383544; border-bottom-width: 3px; color: var(--text); }
+.key span { color: var(--muted); font-size: .92rem; }
+
+/* ---------- install ---------- */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; counter-reset: step; }
+.step { padding: 24px; border-radius: 16px; border: 1px solid var(--line); display: grid; gap: 10px; align-content: start; min-width: 0; }
+.step::before { counter-increment: step; content: counter(step); font-family: var(--display); font-weight: 800; font-size: 2rem; line-height: 1;
+                background: linear-gradient(120deg, var(--a1), var(--a2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.step h3 { font-size: 1.05rem; }
+.step p { margin: 0; color: var(--muted); font-size: .95rem; }
+.step q { quotes: "„" "”"; color: var(--text); }
+.smartscreen { margin-top: 6px; border-radius: 10px; background: #0b3d6b; color: #fff; padding: 12px 14px; font-family: "Segoe UI", system-ui, sans-serif; font-size: .82rem; display: grid; gap: 6px; }
+.smartscreen b { font-size: .95rem; }
+.smartscreen u { text-decoration: underline; text-underline-offset: 2px; }
+.smartscreen span { justify-self: end; border: 1px solid rgba(255,255,255,.7); padding: 4px 12px; }
+
+/* ---------- facts ---------- */
+.facts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); }
+dl.spec { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 12px 24px; font-size: .95rem; }
+dl.spec dt { color: var(--faint); font-family: var(--mono); font-size: .8rem; padding-top: 2px; }
+dl.spec dd { margin: 0; min-width: 0; }
+.hash { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.hash code { display: block; font-family: var(--mono); font-size: .8rem; padding: 12px 14px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line);
+             overflow-wrap: anywhere; color: var(--text); }
+.hash button { all: unset; cursor: pointer; justify-self: start; font-size: .88rem; padding: 8px 14px; border-radius: 10px; background: var(--raised); color: var(--text); }
+.hash button:focus-visible { outline: 2px solid var(--a2); }
+.hash p { margin: 0; color: var(--muted); font-size: .9rem; }
+.faq { display: grid; gap: 10px; margin-top: 48px; }
+.faq details { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.faq summary { cursor: pointer; font-weight: 600; }
+.faq details p { margin: 10px 0 0; color: var(--muted); max-width: 70ch; }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px 40px; color: var(--faint); font-family: var(--mono); font-size: .8rem; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+@media (max-width: 920px) {
+  .hero-grid, .facts { grid-template-columns: 1fr; }
+  .index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .keys, .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .index, .keys, .steps { grid-template-columns: 1fr; }
+  .index article.lead, .index article.wide { grid-column: auto; }
+  .screen { aspect-ratio: 4 / 5; }
+  .island[data-open="true"] { width: 96%; height: 62%; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .win { width: 70%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<div class="topbar" id="topbar">
+  <div class="wrap">
+    <img src="img/ikona.png" alt="" width="26" height="26">
+    <b>OMG Dock</b><span>1.1.6 · Windows 10 / 11</span>
+    <a class="dl" data-dl href="OMG-Dock-Setup.msi">Pobierz</a>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="pitch">
+      <div class="brand"><img src="img/ikona.png" alt="" width="30" height="30">omg dock · windows 10 / 11</div>
+      <h1>OMG<span>Dock</span></h1>
+      <p class="lede">Wyspa na górze ekranu, która wie, czego słuchasz i w co grasz. <b>Muzyka z tekstem w rytm wokalu, schowek, klipy z gier i staty z FACEIT</b> pod jednym ruchem myszy do góry.</p>
+      <div class="cta">
+        <a class="dl" data-dl href="OMG-Dock-Setup.msi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+          Pobierz dla Windows
+        </a>
+        <span class="dl-meta">wersja 1.1.6 · 63,1 MB · za darmo</span>
+      </div>
+      <p class="note" id="dlMissing" hidden>To jest podgląd strony bez pliku instalatora. Przycisk zadziała, gdy strona trafi na serwer razem z plikiem OMG-Dock-Setup.msi.</p>
+    </div>
+
+    <div>
+      <div class="screen" aria-label="Działający podgląd OMG Dock na pulpicie">
+        <div class="wall"></div>
+        <img class="wall-cover" id="wallCover" alt="" aria-hidden="true">
+        <div class="win" aria-hidden="true"><i style="top:38px;width:62%"></i><i style="top:54px;width:48%"></i><i style="top:70px;width:70%"></i></div>
+        <div class="island" id="island" data-open="false" role="button" tabindex="0" aria-label="Otwórz dock" aria-expanded="false">
+          <div class="pill" aria-hidden="true">
+            <div class="art"></div>
+            <div class="clock" data-clock>00:00</div>
+            <div class="eq"><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="panel">
+            <div class="aurora"></div>
+            <div class="bar">
+              <div class="time"><span data-clock>00:00</span><small data-date>pt., 30 paź</small></div>
+              <div class="tabs" role="tablist" aria-label="Karty docka">
+                <button role="tab" aria-selected="true" data-tab="music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span>Muzyka</span></button>
+                <button role="tab" aria-selected="false" data-tab="clip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V2h6v2"/></svg><span>Schowek</span></button>
+                <button role="tab" aria-selected="false" data-tab="clips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg><span>Klipy</span></button>
+                <button role="tab" aria-selected="false" data-tab="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="11" rx="5"/><path d="M8 11v3M6.5 12.5h3M15 12h.01M17.5 13.5h.01"/></svg><span>Staty</span></button>
+              </div>
+              <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+            </div>
+
+            <div class="view music on" data-view="music" role="tabpanel">
+              <div class="cover"></div>
+              <div class="track">
+                <b id="songTitle">OBOK</b>
+                <div class="artist"><span id="songArtist">pitus, Kaczyy</span><a id="songLink" href="https://open.spotify.com/track/6Q8gn8RHZ2NJpGpINbJ6qS" target="_blank" rel="noopener">Spotify ↗</a></div>
+                <div class="prog"><span id="posText">0:42</span><div><i id="progFill"></i></div><span id="lenText">2:50</span></div>
+              </div>
+              <div class="lyrics" id="lyrics" aria-hidden="true"></div>
+            </div>
+
+            <div class="view clip-list" data-view="clip" role="tabpanel">
+              <div class="clip-row"><i>T</i><span>Wbijamy o 21, lobby na Discordzie</span><em>teraz</em></div>
+              <div class="clip-row"><i>🖼</i><span>Zrzut 2026-10-30 21.04.png</span><em>2 min</em></div>
+              <div class="clip-row"><i>F</i><span>C:\Gry\CS2\cfg\autoexec.cfg</span><em>12 min</em></div>
+              <div class="clip-row"><i>T</i><span>gg wp, rewanż jutro?</span><em>1 h</em></div>
+            </div>
+
+            <div class="view tiles" data-view="clips" role="tabpanel">
+              <div class="tile"><b>Valorant</b><em>0:30</em></div>
+              <div class="tile"><b>CS2</b><em>0:30</em></div>
+              <div class="tile"><b>Pulpit</b><em>1:12</em></div>
+              <div class="tile"><b>Fortnite</b><em>0:30</em></div>
+              <div class="clip-actions"><span>● Zapisz ostatnie 30 s · Ctrl+Alt+C</span><span>Zrzut ekranu · Ctrl+Alt+S</span></div>
+            </div>
+
+            <div class="view stats" data-view="stats" role="tabpanel">
+              <div class="level">10</div>
+              <div class="elo"><b>2 140 ELO</b><span>K/D 1,24 · HS 48% · styl: rifler</span></div>
+              <div class="matches"><span>W +25</span><span>W +24</span><span class="l">L −23</span><span>W +26</span><span>W +25</span></div>
+              <span class="demo-tag">przykładowe dane</span>
+            </div>
+          </div>
+        </div>
+        <div class="taskbar" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><span data-clock>00:00</span></div>
+      </div>
+      <div class="stage-cap"><span>Kliknij wyspę i przełączaj karty. Pod utworem jest opis funkcji tekstu, nie słowa piosenki.</span><span class="cap-btns"><button type="button" id="soundBtn" aria-pressed="true" hidden>muzyka: wł.</button><button type="button" id="nextSong">następny utwór →</button></span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="news">
+    <div class="wrap">
+      <p class="eyebrow">Nowe w wersji 1.1.6</p>
+      <div class="news-list">
+        <div><b>Korektor w rytm muzyki</b><span>Paski w wyspie skaczą do basu, wokalu i góry tego, co naprawdę gra.</span></div>
+        <div><b>Overwatch i Fortnite</b><span>Rangi Overwatch na każdą rolę. Fortnite prosto z powtórek, bez logowania i kluczy.</span></div>
+        <div><b>Ikona w zasobniku</b><span>Ikona obok zegara otwiera dock. Możesz go tam też całkiem schować.</span></div>
+        <div><b>Steam w kropkach</b><span>Status jednym kliknięciem w kropkę, a godziny i ostatnia gra widać nawet przy wyłączonym Steamie.</span></div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">10 kart, jedna wyspa</p>
+        <h2>Wszystko, po co zwykle sięgasz do paska zadań</h2>
+        <p>Zwinięta wyspa to zegar i mała okładka. Najedź na nią, a rozwinie się w kartę, której akurat potrzebujesz. Każdą kartę możesz wyłączyć w ustawieniach.</p>
+      </div>
+      <div class="index">
+        <article class="lead">
+          <h3>Muzyka <small>Spotify · YouTube · każda aplikacja</small></h3>
+          <p>Okładka, przewijanie i głośność samej aplikacji, a do tego rzeczy, których nie ma pasek Windows:</p>
+          <ul>
+            <li>tekst piosenki przewija się w rytm wokalu, śpiewana linijka świeci</li>
+            <li>żywa okładka, która lekko płynie w swojej ramce</li>
+            <li>rozmyte tło i poświata w kolorach utworu</li>
+            <li>korektor w wyspie skacze w rytm tego, co naprawdę gra</li>
+          </ul>
+        </article>
+        <article><h3>Klipy <small>NVIDIA · Game Bar</small></h3><p>Zapisuje ostatnie 30 sekund gry, nagrywa i robi zrzuty. Galeria pokazuje grę, datę i długość klipu.</p><span class="detail">Ctrl+Alt+C</span></article>
+        <article><h3>Staty <small>FACEIT · LoL · Overwatch · Fortnite</small></h3><p>Wynik rund, rating i zysk lub strata ELO za każdy mecz, styl gry w CS2, main i rola w League of Legends, rangi Overwatch na każdą rolę oraz wygrane, eliminacje i miejsca w Fortnite, czytane z powtórek na Twoim komputerze.</p><span class="detail">wystarczy nick</span></article>
+        <article><h3>Steam</h3><p>Godziny w grach, ostatnio grana gra, ulubieni znajomi z ich statusem, bestsellery i zmiana statusu, także na „Nie przeszkadzać”.</p><span class="detail">ceny w zł</span></article>
+        <article><h3>Schowek</h3><p>Historia tekstów, plików i obrazków. Hasła z menedżerów haseł nigdy nie są zapisywane.</p><span class="detail">Ctrl+Alt+V</span></article>
+        <article><h3>Półka</h3><p>Przeciągnij pliki na wyspę, a potem wyciągnij je tam, gdzie chcesz. Na telefon trafiają po zeskanowaniu kodu QR.</p><span class="detail">drag &amp; drop</span></article>
+        <article><h3>Notatki</h3><p>Szybka notatka, która zapisuje się sama, zanim zdążysz o niej zapomnieć.</p><span class="detail">Ctrl+Alt+N</span></article>
+        <article><h3>PC</h3><p>Procesor, pamięć, karta graficzna, dyski i sieć na jednym ekranie.</p><span class="detail">na żywo</span></article>
+        <article><h3>Powiadomienia</h3><p>Powiadomienia Windows zebrane w jednym miejscu, z licznikiem na karcie.</p><span class="detail">bez szukania</span></article>
+        <article class="wide"><h3>Kalendarz <small>nowe</small></h3><p>Miesiąc z kropkami w zajętych dniach, wydarzenia na wybrany dzień i przypomnienie, które wyskakuje w wyspie. Wszystko zostaje w docku, nie w kalendarzu Windows.</p><span class="detail">o czasie · 5 · 15 · 60 min przed</span></article>
+      </div>
+      <div class="tweaks" aria-label="Co możesz zmienić">
+        <span>kolory z okładki</span><span>własne czcionki</span><span>3 rozmiary</span><span>ostre lub okrągłe rogi</span><span>krycie tła</span>
+        <span>własna kolejność kart</span><span>dowolne miejsce i monitor</span><span>tryb gry</span><span>chowanie przy pełnym ekranie</span><span>wąski pasek nad zmaksymalizowanym oknem</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap showcase">
+      <div class="section-head" style="margin-bottom:0">
+        <p class="eyebrow">Ustawienia</p>
+        <h2>Wszystko ustawisz w jednym oknie</h2>
+        <ul>
+          <li><span><b>Wyszukiwarka</b> znajduje każdą opcję po nazwie albo opisie.</span></li>
+          <li><span><b>Zmiany działają od razu</b>, bez przycisku „Zapisz” i bez restartu.</span></li>
+          <li><span><b>Klucze do API</b> widać tylko jako kropki, więc zrzut ekranu ich nie zdradzi.</span></li>
+          <li><span>Otwierasz je <b>zębatką</b> w docku albo prawym kliknięciem na wyspie.</span></li>
+        </ul>
+      </div>
+      <figure class="shot"><img src="img/ustawienia.jpg" alt="Okno ustawień OMG Dock na stronie Wygląd: kolory docka, tekstu i akcentu oraz efekty" width="820" height="720" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Skróty</p>
+        <h2>Działają wszędzie, także w grach</h2>
+      </div>
+      <div class="keys">
+        <div class="key"><div class="caps"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>M</kbd></div><span>wycisz mikrofon</span></div>
+        <div class="key"><div class="caps"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>V</kbd></div><span>otwórz schowek</span></div>
+        <div class="key"><div class="caps"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>N</kbd></div><span>szybka notatka</span></div>
+        <div class="key"><div class="caps"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>C</kbd></div><span>zapisz ostatnie 30 s</span></div>
+        <div class="key"><div class="caps"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>S</kbd></div><span>zrzut ekranu</span></div>
+        <div class="key"><div class="caps"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Spacja</kbd></div><span>otwórz lub zamknij</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Instalacja</p>
+        <h2>Minuta i gotowe</h2>
+        <p>Bez uprawnień administratora. Instaluje się tylko dla Ciebie i sam uruchamia się razem z Windows.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>Pobierz instalator</h3><p>Plik OMG-Dock-Setup.msi ma 63,1 MB, bo zawiera wszystko, czego program potrzebuje. Nie musisz niczego doinstalowywać.</p></div>
+        <div class="step">
+          <h3>Przejdź przez SmartScreen</h3>
+          <p>Instalator nie ma płatnego podpisu cyfrowego, więc Windows może pokazać ostrzeżenie. Kliknij <q>Więcej informacji</q>, a potem <q>Uruchom mimo to</q>.</p>
+          <div class="smartscreen" aria-hidden="true"><b>System Windows ochronił ten komputer</b><u>Więcej informacji</u><span>Uruchom mimo to</span></div>
+        </div>
+        <div class="step"><h3>Najedź na górę ekranu</h3><p>Wyspa czeka na środku u góry. Ustawienia otworzysz zębatką albo prawym kliknięciem na wyspie.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="facts">
+        <div>
+          <div class="section-head"><p class="eyebrow">O pliku</p><h2>Co instalujesz</h2></div>
+          <dl class="spec">
+            <dt>system</dt><dd>Windows 10 (2004 lub nowszy) albo Windows 11, 64-bit</dd>
+            <dt>plik</dt><dd>OMG-Dock-Setup.msi · 63,1 MB</dd>
+            <dt>instaluje do</dt><dd class="mono">%LOCALAPPDATA%\Programs\OMG Dock</dd>
+            <dt>twoje dane</dt><dd>zostają na komputerze, w <span class="mono">%LOCALAPPDATA%\OMG Dock</span></dd>
+            <dt>internet</dt><dd>tylko dla statystyk z gier, Steama i tekstów piosenek</dd>
+            <dt>usuwanie</dt><dd>Ustawienia → Aplikacje → Zainstalowane aplikacje → OMG Dock</dd>
+          </dl>
+        </div>
+        <div class="hash">
+          <div class="section-head" style="margin-bottom:8px"><p class="eyebrow">Suma kontrolna SHA-256</p><h2>Sprawdź, czy plik jest cały</h2></div>
+          <code id="sha">B7D29D7030D0C8529EF5B13D32AF22E57B896778A51381A3209F8AACEDF634A9</code>
+          <button type="button" id="copySha">Kopiuj sumę</button>
+          <p>W PowerShellu w folderze z pobranym plikiem wpisz <span class="mono">Get-FileHash .\OMG-Dock-Setup.msi</span>. Wynik musi być taki sam jak powyżej.</p>
+        </div>
+      </div>
+
+      <div class="faq">
+        <details><summary>Czy to kosztuje?</summary><p>Nie. OMG Dock jest za darmo i nie ma reklam.</p></details>
+        <details><summary>Skąd bierze się tekst piosenki?</summary><p>Z otwartej bazy lrclib.net, z której korzystają odtwarzacze muzyki. Wysyłany jest tylko tytuł i wykonawca. Gdy utwór nie ma tekstu z czasami, panel po prostu się nie pokazuje.</p></details>
+        <details><summary>Czy spowalnia gry?</summary><p>Zwinięta wyspa zużywa około 0,2–0,5% procesora i oddaje systemowi pamięć, więc w Menedżerze zadań widać około 60 MB. W trybie gry zatrzymuje animacje, a przy pełnym ekranie może się całkiem schować.</p></details>
+        <details><summary>Skąd jest rating przy meczach FACEIT?</summary><p>FACEIT nie podaje ratingu, więc OMG Dock liczy go publicznym wzorem HLTV 1.0 z Twoich zabójstw, śmierci i rund z wieloma fragami. 1.00 to przeciętny mecz.</p></details>
+        <details><summary>Dlaczego Windows ostrzega przed instalatorem?</summary><p>Bo instalator nie jest podpisany płatnym certyfikatem. To ostrzeżenie pojawia się przy każdym niepodpisanym programie. Sumę kontrolną możesz sprawdzić powyżej.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>OMG Dock 1.1.6</span><span>Windows 10 / 11 · x64</span></div></footer>
+
+<script>
+(() => {
+  // Demo songs with the three colours the dock would use (OBOK's are taken from its black-and-white cover).
+  // The lyrics strip describes the feature instead of quoting anyone's words; len 0 = length not shown.
+  const lines = ["tu przewija się tekst utworu", "śpiewana linijka świeci na biało", "następna czeka zaraz pod nią", "teksty przychodzą z lrclib.net"];
+  const songs = [
+    { title: "OBOK", artist: "pitus, Kaczyy", len: 170, colors: ["#e4e4ea", "#9a9aa6", "#4a4a56"],
+      link: "https://open.spotify.com/track/6Q8gn8RHZ2NJpGpINbJ6qS", cover: "img/obok.jpg", lines },
+    // Spotify's own thumbnail, linked rather than copied; where it can't load, the colours stay.
+    { title: "Rozmazana kreska", artist: "Kinny Zimmer", len: 0, colors: ["#ff6fae", "#ffb86b", "#7b5cff"],
+      link: "https://open.spotify.com/track/5Fq68C3uTcbvqmS1H5LOdw",
+      cover: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e0203033ec63673e12ffce05152", lines }
+  ];
+  const root = document.documentElement;
+  const island = document.getElementById("island");
+  const lyrics = document.getElementById("lyrics");
+  const fill = document.getElementById("progFill");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let song = 0, pos = 42, line = 0;
+
+  const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+  // The song's thumbnail in the island and the pill, and blurred as the wallpaper; no cover, the colours stay.
+  const coverBox = island.querySelector(".cover"), pillArt = island.querySelector(".pill .art"), wallCover = document.getElementById("wallCover");
+  function setCover(src) {
+    coverBox.classList.toggle("has-img", !!src);
+    coverBox.innerHTML = pillArt.innerHTML = "";
+    if (src) {
+      for (const box of [coverBox, pillArt]) {
+        const img = new Image();
+        img.alt = "";
+        img.onerror = () => { if (songs[song].cover === src) setCover(""); };
+        img.src = src;
+        box.appendChild(img);
+      }
+      wallCover.src = src;
+    }
+    wallCover.classList.toggle("on", !!src);
+  }
+  function tickClock() {
+    const now = new Date();
+    const hm = now.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" });
+    document.querySelectorAll("[data-clock]").forEach(el => el.textContent = hm);
+    const d = now.toLocaleDateString("pl-PL", { weekday: "short", day: "numeric", month: "short" });
+    document.querySelectorAll("[data-date]").forEach(el => el.textContent = d);
+  }
+
+  function setSong(i) {
+    song = (i + songs.length) % songs.length;
+    const s = songs[song];
+    s.colors.forEach((c, k) => root.style.setProperty(`--a${k + 1}`, c));
+    document.getElementById("songTitle").textContent = s.title;
+    document.getElementById("songArtist").textContent = s.artist;
+    document.getElementById("songLink").href = s.link;
+    document.getElementById("lenText").textContent = s.len ? fmt(s.len) : "";
+    setCover(s.cover);
+    lyrics.innerHTML = "";
+    s.lines.forEach(t => { const p = document.createElement("p"); p.textContent = t; lyrics.appendChild(p); });
+    pos = 30 + song * 9; line = 0; showLine();
+    playIfOn();
+  }
+  function showLine() {
+    [...lyrics.children].forEach((p, k) => p.classList.toggle("now", k === line));
+    const shift = Math.max(0, line - 1);
+    [...lyrics.children].forEach((p, k) => p.hidden = k < shift || k > shift + 2);
+  }
+  function tickSong() {
+    const len = songs[song].len || 200; // no length known: the bar still moves
+    // While OBOK really plays, the bar follows the music.
+    pos = song === 0 && !audio.paused ? Math.min(len, Math.floor(audio.currentTime)) : pos + 1 > len ? 0 : pos + 1;
+    document.getElementById("posText").textContent = fmt(pos);
+    fill.style.width = `${(pos / len) * 100}%`;
+  }
+
+  function open(on) {
+    island.dataset.open = on;
+    island.setAttribute("aria-expanded", on);
+    island.setAttribute("aria-label", on ? "Dock" : "Otwórz dock");
+  }
+  function showTab(name) {
+    island.querySelectorAll("[role=tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === name));
+    island.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.dataset.view === name));
+  }
+  island.addEventListener("click", e => {
+    const tab = e.target.closest("[role=tab]");
+    if (island.dataset.open !== "true") { open(true); return; }
+    if (tab) { showTab(tab.dataset.tab); paused = true; }
+  });
+  island.addEventListener("keydown", e => {
+    if ((e.key === "Enter" || e.key === " ") && island.dataset.open !== "true") { e.preventDefault(); open(true); }
+    if (e.key === "Escape") open(false);
+  });
+  let paused = false;
+  island.addEventListener("mouseenter", () => paused = true);
+  island.addEventListener("mouseleave", () => paused = false);
+  document.getElementById("nextSong").addEventListener("click", () => { setSong(song + 1); open(true); showTab("music"); });
+
+  // OBOK quietly in the background (7%), only when the file is on the server: browsers allow sound only after
+  // the first click, and the button turns it off for good (remembered in this browser).
+  const audio = new Audio();
+  audio.volume = 0.07;
+  audio.loop = true;
+  const soundBtn = document.getElementById("soundBtn");
+  let soundOn = true;
+  try { soundOn = localStorage.getItem("omgdock-sound") !== "off"; } catch {}
+  function playIfOn() {
+    if (!audio.src) return;
+    if (soundOn && song === 0) audio.play().catch(() => {}); else audio.pause();
+  }
+  function showSound() {
+    soundBtn.textContent = soundOn ? "muzyka: wł." : "muzyka: wył.";
+    soundBtn.setAttribute("aria-pressed", soundOn);
+  }
+  audio.addEventListener("playing", () => soundBtn.dataset.playing = "true");
+  audio.addEventListener("pause", () => soundBtn.dataset.playing = "false");
+  fetch("audio/obok.mp3", { method: "HEAD" }).then(r => {
+    if (!r.ok) return;
+    audio.src = "audio/obok.mp3";
+    soundBtn.hidden = false;
+    showSound();
+    addEventListener("pointerdown", playIfOn, { once: true });
+  }).catch(() => {});
+  soundBtn.addEventListener("click", () => {
+    soundOn = !soundOn;
+    try { localStorage.setItem("omgdock-sound", soundOn ? "on" : "off"); } catch {}
+    showSound();
+    playIfOn();
+  });
+
+  // Download buttons. On GitHub Pages (<user>.github.io/<repo>/) the installer is the repo's latest release,
+  // so the link stays right after every new version. Elsewhere it sits next to the page; in a preview without
+  // it, say so instead of a dead link.
+  const dls = document.querySelectorAll("[data-dl]");
+  const pages = location.hostname.match(/^([^.]+)\.github\.io$/i);
+  if (pages) {
+    const repo = location.pathname.split("/").filter(Boolean)[0] || location.hostname;
+    dls.forEach(dl => dl.href = `https://github.com/${pages[1]}/${repo}/releases/latest/download/OMG-Dock-Setup.msi`);
+  } else {
+    fetch(dls[0].getAttribute("href"), { method: "HEAD" }).then(r => {
+      if (r.status === 404) {
+        dls.forEach(dl => { dl.classList.add("off"); dl.removeAttribute("href"); dl.setAttribute("aria-disabled", "true"); });
+        document.getElementById("dlMissing").hidden = false;
+      }
+    }).catch(() => {});
+  }
+
+  // The top bar with its own download button appears once the big one has scrolled away.
+  const bar = document.getElementById("topbar");
+  bar.inert = true;
+  new IntersectionObserver(([e]) => {
+    const show = !e.isIntersecting && e.boundingClientRect.top < 0;
+    bar.classList.toggle("show", show);
+    bar.inert = !show;
+  }).observe(document.querySelector(".cta"));
+
+  const sha = document.getElementById("sha");
+  document.getElementById("copySha").addEventListener("click", e => {
+    const btn = e.currentTarget;
+    navigator.clipboard.writeText(sha.textContent.trim()).then(() => btn.textContent = "Skopiowano", () => {
+      const r = document.createRange(); r.selectNodeContents(sha); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = "Zaznaczono, wciśnij Ctrl+C";
+    });
+  });
+
+  tickClock(); setSong(0); showTab("music");
+  setInterval(tickClock, 15000);
+  setInterval(tickSong, 1000);
+  if (!reduce) {
+    setTimeout(() => open(true), 900);
+    setInterval(() => { if (!paused) { line = (line + 1) % songs[song].lines.length; showLine(); } }, 2600);
+    // The demo moves on to the next song by itself, but not away from OBOK while it's actually playing.
+    setInterval(() => { if (!paused && island.dataset.open === "true" && audio.paused) setSong(song + 1); }, 15600);
+  } else open(true);
+})();
+</script>
+</body>
+</html>
