@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Polityka prywatności OMG Dock: co program robi z danymi i z jakimi usługami się łączy.">
+<link rel="icon" type="image/png" href="img/ikona.png">
+<title>OMG Dock – prywatność</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700&family=Manrope:wght@400;600;700&display=swap">
+<style>
+:root { --bg: #0d0c11; --surface: #17151d; --text: #ecebf2; --muted: #a29fb0; --line: #2a2733; --accent: #7cd3ff; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 Manrope, "Segoe UI", sans-serif; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 40px 16px 64px; }
+a { color: var(--accent); }
+.back { display: inline-flex; gap: 10px; align-items: center; color: var(--muted); text-decoration: none; font-weight: 600; }
+.back img { width: 28px; height: 28px; border-radius: 8px; }
+h1 { font-family: Unbounded, sans-serif; font-size: clamp(1.7rem, 5vw, 2.4rem); line-height: 1.15; margin: 28px 0 6px; }
+.date { color: var(--muted); margin: 0 0 28px; }
+h2 { font-family: Unbounded, sans-serif; font-size: 1.1rem; margin: 36px 0 10px; }
+p, li { color: #d6d4df; }
+ul { padding-left: 20px; }
+li { margin: 6px 0; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 18px 0; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .95rem; }
+th, td { text-align: left; vertical-align: top; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+td:first-child { white-space: nowrap; font-weight: 600; }
+@media (max-width: 600px) { td:first-child { white-space: normal; } th, td { padding: 8px 4px; } }
+footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="./"><img src="img/ikona.png" alt="">OMG Dock</a>
+  <h1>Polityka prywatności</h1>
+  <p class="date">Obowiązuje od 31 października 2026 r.</p>
+
+  <div class="box">
+    <p><b>W skrócie:</b> OMG Dock działa na Twoim komputerze. Nie ma konta, reklam ani śledzenia i nie wysyła twórcy
+    żadnych Twoich danych. Gdy włączysz funkcję, która potrzebuje internetu (staty z gier, teksty piosenek, Steam),
+    program pyta wprost odpowiednią usługę tylko o to, czego potrzebuje do wyświetlenia.</p>
+  </div>
+
+  <h2>Co zostaje na Twoim komputerze</h2>
+  <p>Wszystko, co program zapamiętuje, leży lokalnie w folderze danych OMG Dock
+  (<code>%LOCALAPPDATA%\OMG Dock</code>, a w wersji z Microsoft Store w prywatnym folderze tej aplikacji):</p>
+  <ul>
+    <li>ustawienia, w tym wpisane nicki, BattleTag, Riot ID i opcjonalne klucze API (FACEIT, Steam),</li>
+    <li>historia schowka (teksty, ścieżki plików i obrazki) – teksty oznaczone przez menedżery haseł nigdy nie są zapisywane,
+      a historię możesz wstrzymać albo wyczyścić w ustawieniach,</li>
+    <li>notatki, wydarzenia z kalendarza docka, zapamiętane teksty piosenek i historia Twojego ELO.</li>
+  </ul>
+  <p>Program czyta też lokalnie, bez wysyłania gdziekolwiek: odtwarzaną muzykę z Windowsa, powiadomienia Windows (jeśli na to pozwolisz),
+  pliki Steama, uruchomionego klienta League of Legends, powtórki Fortnite, klipy z Xbox Game Bar lub NVIDIA i dane o sprzęcie (procesor, RAM, dyski).
+  Korektor słucha dźwięku z głośników tylko wtedy, gdy jego paski są widoczne, liczy poziomy w pamięci i niczego nie nagrywa ani nie zapisuje.</p>
+  <p>Półka „wyślij na telefon” udostępnia wybrane pliki tylko w Twojej sieci lokalnej i tylko wtedy, gdy pokażesz kod QR.</p>
+
+  <h2>Z jakimi usługami się łączy</h2>
+  <table>
+    <tr><th>Usługa</th><th>Co dostaje i po co</th></tr>
+    <tr><td>FACEIT</td><td>Nick, żeby pokazać ELO i poziom. Jeśli wpiszesz swój klucz API – także ten klucz, po K/D i ostatnie mecze.</td></tr>
+    <tr><td>OverFast API</td><td>BattleTag, żeby pokazać rangi Overwatch z publicznego profilu.</td></tr>
+    <tr><td>LRCLIB (lrclib.net)</td><td>Tytuł, wykonawcę, album i długość utworu, żeby znaleźć tekst piosenki (wersja Pro).</td></tr>
+    <tr><td>Steam</td><td>Numery gier (nazwy, okładki, nowości, bestsellery), publiczne profile ulubionych znajomych, a jeśli wpiszesz klucz Steam Web API – ten klucz i Twój SteamID, po liczbę gier na koncie.</td></tr>
+    <tr><td>Community Dragon</td><td>Tylko numery ikon bohaterów League of Legends, żeby je wyświetlić.</td></tr>
+    <tr><td>Microsoft Store / Steam</td><td>Zakup wersji Pro obsługuje sklep; program tylko pyta system, czy Pro jest kupione.</td></tr>
+  </table>
+  <p>Każda z tych usług ma własną politykę prywatności. Przyciski takie jak op.gg, FACEIT czy fortnitetracker.com tylko otwierają stronę w Twojej przeglądarce.</p>
+
+  <h2>Czego program nie robi</h2>
+  <ul>
+    <li>nie zbiera statystyk użycia, nie ma reklam ani narzędzi śledzących,</li>
+    <li>nie wysyła twórcy ani nikomu innemu Twojego schowka, notatek, plików czy kluczy,</li>
+    <li>nie sprzedaje i nie udostępnia danych.</li>
+  </ul>
+
+  <h2>Usunięcie danych</h2>
+  <p>Odinstaluj OMG Dock i usuń folder danych. Historię schowka możesz też wyczyścić w ustawieniach (Schowek → Wyczyść historię),
+  a klucze API usunąć w Ustawieniach → Gry i konta.</p>
+
+  <h2>Kontakt</h2>
+  <p>Pytania o prywatność: <a href="https://github.com/PjooteRek/omgduck/issues">github.com/PjooteRek/omgduck/issues</a>.
+  O zmianach w tej polityce poinformuje data na górze strony.</p>
+
+  <h2 lang="en">Privacy policy – English summary</h2>
+  <div class="box" lang="en">
+    <p>OMG Dock runs on your PC. It has no account, ads, analytics or tracking, and sends no personal data to its developer.
+    Settings, clipboard history (password-manager entries are never stored), notes and caches stay in the local data folder.
+    Only when a feature needs it does the app contact a third-party service directly: FACEIT (nickname, and your own API key if you add one),
+    OverFast API (BattleTag), LRCLIB (song title, artist, album, length), Steam (app IDs, public profiles of favourite friends,
+    and your Steam Web API key and SteamID if you add a key) and Community Dragon (League of Legends icon IDs).
+    The equalizer analyses speaker output in memory and records nothing. Purchases are handled by the Microsoft Store or Steam.
+    To remove your data, uninstall the app and delete its data folder. Contact: github.com/PjooteRek/omgduck/issues.</p>
+  </div>
+
+  <footer>OMG Dock · <a href="./">strona główna</a></footer>
+</div>
+</body>
+</html>
