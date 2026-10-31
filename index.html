@@ -612,10 +612,10 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
   island.addEventListener("mouseleave", () => paused = false);
   document.getElementById("nextSong").addEventListener("click", () => { setSong(song + 1); open(true); showTab("music"); });
 
-  // OBOK quietly in the background (7%), only when the file is on the server: browsers allow sound only after
+  // OBOK quietly in the background (2%), only when the file is on the server: browsers allow sound only after
   // the first click, and the button turns it off for good (remembered in this browser).
   const audio = new Audio();
-  audio.volume = 0.07;
+  audio.volume = 0.02;
   audio.loop = true;
   const soundBtn = document.getElementById("soundBtn");
   let soundOn = true;
