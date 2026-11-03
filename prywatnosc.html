@@ -36,7 +36,7 @@ footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
 <div class="wrap">
   <a class="back" href="./"><img src="img/ikona.png" alt="">OMG Dock</a>
   <h1>Polityka prywatności</h1>
-  <p class="date">Obowiązuje od 31 października 2026 r.</p>
+  <p class="date">Obowiązuje od 3 listopada 2026 r.</p>
 
   <div class="box">
     <p><b>W skrócie:</b> OMG Dock działa na Twoim komputerze. Nie ma konta, reklam ani śledzenia i nie wysyła twórcy
@@ -56,6 +56,8 @@ footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
   <p>Program czyta też lokalnie, bez wysyłania gdziekolwiek: odtwarzaną muzykę z Windowsa, powiadomienia Windows (jeśli na to pozwolisz),
   pliki Steama, uruchomionego klienta League of Legends, powtórki Fortnite, klipy z Xbox Game Bar lub NVIDIA i dane o sprzęcie (procesor, RAM, dyski).
   Korektor słucha dźwięku z głośników tylko wtedy, gdy jego paski są widoczne, liczy poziomy w pamięci i niczego nie nagrywa ani nie zapisuje.</p>
+  <p>Klip głosem, jeśli go włączysz, słucha mikrofonu i na Twoim komputerze rozpoznaje tylko kilka komend, takich jak „klipuj to”.
+  Dźwięk jest analizowany w pamięci: nic nie jest nagrywane, zapisywane ani wysyłane.</p>
   <p>Półka „wyślij na telefon” udostępnia wybrane pliki tylko w Twojej sieci lokalnej i tylko wtedy, gdy pokażesz kod QR.</p>
 
   <h2>Z jakimi usługami się łączy</h2>
@@ -67,6 +69,8 @@ footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
     <tr><td>Steam</td><td>Numery gier (nazwy, okładki, nowości, bestsellery), publiczne profile ulubionych znajomych, a jeśli wpiszesz klucz Steam Web API – ten klucz i Twój SteamID, po liczbę gier na koncie.</td></tr>
     <tr><td>Community Dragon</td><td>Tylko numery ikon bohaterów League of Legends, żeby je wyświetlić.</td></tr>
     <tr><td>Microsoft Store / Steam</td><td>Zakup wersji Pro obsługuje sklep; program tylko pyta system, czy Pro jest kupione.</td></tr>
+    <tr><td>GitHub</td><td>Wersja ze strony co kilka godzin sprawdza, czy jest nowa wersja OMG Dock, i pobiera jej instalator. Przy pierwszym włączeniu klipu głosem pobiera też silnik mowy Vosk. Nic nie jest wysyłane.</td></tr>
+    <tr><td>alphacephei.com</td><td>Tylko przy pierwszym włączeniu klipu głosem: pobranie modelu mowy (ok. 50 MB). Nic nie jest wysyłane.</td></tr>
   </table>
   <p>Każda z tych usług ma własną politykę prywatności. Przyciski takie jak op.gg, FACEIT czy fortnitetracker.com tylko otwierają stronę w Twojej przeglądarce.</p>
 
@@ -92,7 +96,10 @@ footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
     Only when a feature needs it does the app contact a third-party service directly: FACEIT (nickname, and your own API key if you add one),
     OverFast API (BattleTag), LRCLIB (song title, artist, album, length), Steam (app IDs, public profiles of favourite friends,
     and your Steam Web API key and SteamID if you add a key) and Community Dragon (League of Legends icon IDs).
-    The equalizer analyses speaker output in memory and records nothing. Purchases are handled by the Microsoft Store or Steam.
+    The equalizer analyses speaker output in memory and records nothing. Clip by voice, if you turn it on, listens to the microphone and
+    recognises a few commands on your PC; the audio is processed in memory and never recorded, saved or sent. The website version checks
+    GitHub for new versions and downloads them; turning on clip by voice downloads the Vosk speech engine from GitHub and a speech model
+    from alphacephei.com once. Purchases are handled by the Microsoft Store or Steam.
     To remove your data, uninstall the app and delete its data folder. Contact: github.com/PjooteRek/omgduck/issues.</p>
   </div>
 
