@@ -58,10 +58,12 @@ footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
   Korektor słucha dźwięku z głośników tylko wtedy, gdy jego paski są widoczne, liczy poziomy w pamięci i niczego nie nagrywa ani nie zapisuje.</p>
   <p>Klip głosem, jeśli go włączysz, słucha mikrofonu i na Twoim komputerze rozpoznaje tylko kilka komend, takich jak „klipuj to”.
   Dźwięk jest analizowany w pamięci: nic nie jest nagrywane, zapisywane ani wysyłane.</p>
-  <p>Klipy w grach (włączone, dopóki nie wyłączysz ich w ustawieniach): tylko gdy gra jest na pierwszym planie,
-  program trzyma w pamięci jej ostatnie sekundy (15–60, jak ustawisz) – obraz okna gry, dźwięk z głośników i, jeśli to włączysz,
-  mikrofon. Starsze sekundy są na bieżąco nadpisywane, a po wyjściu z gry pamięć jest zwalniana. Plik powstaje wyłącznie wtedy, gdy
-  zapiszesz klip (przyciskiem, skrótem albo głosem), w folderze Wideo\OMG Dock. Nic nie jest wysyłane.</p>
+  <p>Klipy (włączone, dopóki nie wyłączysz ich w ustawieniach): gdy gra jest na pierwszym planie, program trzyma w pamięci
+  jej ostatnie sekundy (15–60, jak ustawisz) – obraz okna gry, dźwięk z głośników i, jeśli to włączysz, mikrofon. Poza grami,
+  gdy masz włączone „Klipy poza grami” (domyślnie tak), robi to samo z ekranem, na którym jest aktywne okno, razem z kursorem.
+  Starsze sekundy są na bieżąco nadpisywane, a po wyłączeniu klipów pamięć jest zwalniana. Plik powstaje wyłącznie wtedy, gdy
+  zapiszesz klip (przyciskiem, skrótem albo głosem) – razem z kilkoma sekundami po tej chwili, jak ustawisz – w folderze
+  Wideo\OMG Dock. Nic nie jest wysyłane.</p>
   <p>Półka przesyła pliki między tym komputerem a telefonem albo drugim komputerem w Twojej sieci lokalnej, tylko gdy
   włączysz w niej udostępnianie. Pliki idą prosto między urządzeniami, bez żadnego serwera w internecie, a te odebrane
   trafiają do folderu Pobrane\OMG Dock. Jeśli w telefonie włączysz podgląd kamery, jej obraz jest przesyłany tą samą
@@ -104,9 +106,11 @@ footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
     OverFast API (BattleTag), LRCLIB (song title, artist, album, length), Steam (app IDs, public profiles of favourite friends,
     and your Steam Web API key and SteamID if you add a key) and Community Dragon (League of Legends icon IDs).
     The equalizer analyses speaker output in memory and records nothing. Clip by voice, if you turn it on, listens to the microphone and
-    recognises a few commands on your PC; the audio is processed in memory and never recorded, saved or sent. For clips in games (on
-    unless you turn them off in the settings), only while a game is in front it keeps the game's last seconds in memory (its window, the speakers' sound and,
-    if you turn it on, the microphone); a file is written only when you save a clip, to Videos\OMG Dock, and nothing is sent. While you have sharing on,
+    recognises a few commands on your PC; the audio is processed in memory and never recorded, saved or sent. For clips (on
+    unless you turn them off in the settings), while a game is in front it keeps the game's last seconds in memory (its window, the speakers' sound and,
+    if you turn it on, the microphone); outside games, with "Clips outside games" on (the default), it does the same with the screen that has
+    the active window, pointer included. A file is written only when you save a clip (plus a few seconds after, as set), to Videos\OMG Dock,
+    and nothing is sent. While you have sharing on,
     the shelf swaps files directly with a phone or another computer on your local network, with no server in between; received files
     are saved in Downloads\OMG Dock. If you turn on the phone's camera, its picture streams over the same local network
     and shows live on this PC; nothing is recorded or saved. The website version checks
