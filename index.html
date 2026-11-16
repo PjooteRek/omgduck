@@ -252,6 +252,12 @@ section.news { padding-block: 28px 36px; }
 .smartscreen b { font-size: .95rem; }
 .smartscreen u { text-decoration: underline; text-underline-offset: 2px; }
 .smartscreen span { justify-self: end; border: 1px solid rgba(255,255,255,.7); padding: 4px 12px; }
+.av { margin-top: 18px; padding: 22px 24px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); display: grid; gap: 10px; }
+.av h3 { font-size: 1.05rem; }
+.av p, .av li { margin: 0; color: var(--muted); font-size: .95rem; }
+.av ol { margin: 0; padding-left: 1.3rem; display: grid; gap: 6px; }
+.av q { quotes: "„" "”"; color: var(--text); }
+.av .warn { color: var(--text); }
 
 /* ---------- facts ---------- */
 .facts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); }
@@ -478,6 +484,17 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         </div>
         <div class="step"><h3>Najedź na górę ekranu</h3><p>Wyspa czeka na środku u góry. Ustawienia otworzysz zębatką albo prawym kliknięciem na wyspie.</p></div>
       </div>
+      <div class="av" id="antywirus">
+        <h3>Antywirus albo Windows blokuje OMG Dock?</h3>
+        <p>OMG Dock jest nowy i nie ma jeszcze płatnego podpisu cyfrowego, więc niektóre antywirusy i Windows traktują go ostrożnie. Zgłosiliśmy program do sprawdzenia w Microsoft i czekamy na wynik. Do tego czasu:</p>
+        <ol>
+          <li>Pobieraj tylko stąd – przycisk <q>Pobierz</q> prowadzi do oficjalnego wydania na GitHubie – i sprawdź sumę kontrolną niżej.</li>
+          <li>Gdy Windows pokaże <q>System Windows ochronił ten komputer</q>, kliknij <q>Więcej informacji</q>, a potem <q>Uruchom mimo to</q>.</li>
+          <li>Gdy antywirus zablokuje plik albo przeniesie go do kwarantanny, przywróć go i dodaj wyjątek dla instalatora albo folderu OMG Dock. W Microsoft Defender: Zabezpieczenia Windows → Ochrona przed wirusami i zagrożeniami → Historia ochrony → wpis z OMG Dock → <q>Zezwól na urządzeniu</q>.</li>
+          <li>Jeśli Twój antywirus nie pozwala dodać wyjątku, wyłącz go na chwilę tylko na czas pobrania i instalacji – i od razu włącz z powrotem.</li>
+        </ol>
+        <p class="warn">Inteligentnej kontroli aplikacji (Smart App Control) lepiej nie wyłączać – na części wersji Windows nie da się jej potem włączyć ponownie. Jeśli to ona blokuje OMG Dock, poczekaj na wersję zatwierdzoną przez Microsoft.</p>
+      </div>
     </div>
   </section>
 
@@ -510,7 +527,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         <details><summary>Skąd bierze się tekst piosenki?</summary><p>Z otwartej bazy lrclib.net, z której korzystają odtwarzacze muzyki. Wysyłany jest tylko tytuł i wykonawca. Gdy utwór nie ma tekstu z czasami, panel po prostu się nie pokazuje.</p></details>
         <details><summary>Czy spowalnia gry?</summary><p>Zwinięta wyspa zużywa około 0,2–0,5% procesora i oddaje systemowi pamięć, więc w Menedżerze zadań widać około 60 MB. W trybie gry zatrzymuje animacje, a przy pełnym ekranie może się całkiem schować.</p></details>
         <details><summary>Skąd jest rating przy meczach FACEIT?</summary><p>FACEIT nie podaje ratingu, więc OMG Dock liczy go publicznym wzorem HLTV 1.0 z Twoich zabójstw, śmierci i rund z wieloma fragami. 1.00 to przeciętny mecz.</p></details>
-        <details><summary>Dlaczego Windows ostrzega przed instalatorem?</summary><p>Bo instalator nie jest podpisany płatnym certyfikatem. To ostrzeżenie pojawia się przy każdym niepodpisanym programie. Sumę kontrolną możesz sprawdzić powyżej.</p></details>
+        <details><summary>Dlaczego Windows ostrzega przed instalatorem?</summary><p>Bo instalator nie jest podpisany płatnym certyfikatem. To ostrzeżenie pojawia się przy każdym niepodpisanym programie. Zgłosiliśmy OMG Dock do sprawdzenia w Microsoft i czekamy na wynik. Sumę kontrolną możesz sprawdzić powyżej, a co zrobić, gdy blokuje antywirus, jest w części <a href="#antywirus">Instalacja</a>.</p></details>
       </div>
     </div>
   </section>
